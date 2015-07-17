@@ -70,10 +70,8 @@ action :upsert_and_notify do
     code update_command(custom.to_json)
   end
   stacks.each do |id, stack|
-    if not id.eql?(stack_id)
-      bash "notify stack #{id} with new stack states" do
-        code create_deployment_command(id, stacks, stack['recipe'])
-      end
+    bash "notify stack #{id} with current stack states" do
+      code create_deployment_command(id, stacks, stack['recipe'])
     end
   end
 end

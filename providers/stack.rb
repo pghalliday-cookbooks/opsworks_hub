@@ -23,7 +23,7 @@ def create_deployment_command
     Name: 'execute_recipes',
     Args: {
       recipes: [
-        'opsworks_hub::configure'
+        'opsworks_hub::notify'
       ]
     }
   }.to_json
