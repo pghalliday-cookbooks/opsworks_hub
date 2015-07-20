@@ -13,7 +13,7 @@ def create_deployment_command
         data: {
           stack: node['opsworks']['stack'],
           layers: node['opsworks']['layers'],
-          recipe: new_resource.recipe
+          recipes: new_resource.recipes
         },
         id: node['opsworks']['stack']['id']
       }

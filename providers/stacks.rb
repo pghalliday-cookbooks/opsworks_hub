@@ -6,7 +6,7 @@ end
 
 use_inline_resources
 
-def create_deployment_command (stack_id, stacks, recipe)
+def create_deployment_command (stack_id, stacks, recipes)
   stacks_data = {
     opsworks_hub: {
       stacks: stacks
@@ -15,9 +15,7 @@ def create_deployment_command (stack_id, stacks, recipe)
   command = {
     Name: 'execute_recipes',
     Args: {
-      recipes: [
-        recipe
-      ]
+      recipes: recipes
     }
   }.to_json
   [
@@ -56,7 +54,7 @@ action :upsert_and_notify do
   stack_data = node['opsworks_hub']['incoming']
   raise "invalid stack data - need id" if stack_data['id'].nil?
   raise "invalid stack data - need data" if stack_data['data'].nil?
-  raise "invalid stack data - need recipe" if stack_data['data']['recipe'].nil?
+  raise "invalid stack data - need recipes" if stack_data['data']['recipes'].nil?
   stack_id = stack_data['id']
   description_json = Mixlib::ShellOut.new(describe_command)
   description_json.run_command
@@ -72,7 +70,7 @@ action :upsert_and_notify do
   end
   stacks.each do |id, stack|
     bash "notify stack #{id} with current stack states" do
-      code create_deployment_command(id, stacks, stack['recipe'])
+      code create_deployment_command(id, stacks, stack['recipes'])
     end
   end
 end
