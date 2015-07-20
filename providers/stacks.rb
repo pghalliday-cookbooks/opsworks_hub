@@ -56,7 +56,7 @@ action :upsert_and_notify do
   stack_data = node['opsworks_hub']['incoming']
   raise "invalid stack data - need id" if stack_data['id'].nil?
   raise "invalid stack data - need data" if stack_data['data'].nil?
-  raise "invalid stack data - need recipe" if stack_data['recipe'].nil?
+  raise "invalid stack data - need recipe" if stack_data['data']['recipe'].nil?
   stack_id = stack_data['id']
   description_json = Mixlib::ShellOut.new(describe_command)
   description_json.run_command
