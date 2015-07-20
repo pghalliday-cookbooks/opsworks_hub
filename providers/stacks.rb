@@ -43,6 +43,7 @@ end
 
 def describe_command
   [
+    "AWS_DEFAULT_OUTPUT=json",
     "AWS_ACCESS_KEY_ID=#{new_resource.access_key_id}",
     "AWS_SECRET_ACCESS_KEY=#{new_resource.secret_access_key}",
     'aws opsworks --region us-east-1 describe-stacks',
