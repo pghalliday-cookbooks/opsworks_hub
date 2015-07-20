@@ -62,7 +62,7 @@ action :upsert_and_notify do
   description_json.run_command
   description_json.error!
   description = JSON.parse(description_json.stdout)
-  custom_json = description['CustomJson']
+  custom_json = description['Stacks'][0]['CustomJson']
   custom = JSON.parse(custom_json)
   stacks = custom['opsworks_hub']['stacks']
   stacks[stack_id] = stack_data['data']
