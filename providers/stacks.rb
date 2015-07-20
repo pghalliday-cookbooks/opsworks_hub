@@ -64,8 +64,9 @@ action :upsert_and_notify do
   description = JSON.parse(description_json.stdout)
   custom_json = description['Stacks'][0]['CustomJson']
   custom = JSON.parse(custom_json)
-  stacks = custom['opsworks_hub']['stacks']
+  stacks = custom['opsworks_hub']['stacks'] || {}
   stacks[stack_id] = stack_data['data']
+  custom['opsworks_hub']['stacks'] = stacks
   bash "set custom json for stack #{node['opsworks']['stack']['id']}" do
     code update_command(custom.to_json)
   end
