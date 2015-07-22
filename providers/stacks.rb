@@ -61,7 +61,7 @@ def describe_command
 end
 
 action :upsert_and_notify do
-  stack_data = node['opsworks_hub']['incoming']
+  stack_data = new_resource.nodes
   raise "invalid stack data - need id" if stack_data['id'].nil?
   raise "invalid stack data - need data" if stack_data['data'].nil?
   raise "invalid stack data - need recipes" if stack_data['data']['recipes'].nil?
@@ -72,9 +72,11 @@ action :upsert_and_notify do
   description = JSON.parse(description_json.stdout)
   custom_json = description['Stacks'][0]['CustomJson']
   custom = JSON.parse(custom_json)
-  stacks = custom['opsworks_hub']['stacks'] || {}
+  custom['opsworks_hub'] = {} if custom['opsworks_hub'].nil?
+  customHubData = custom['opsworks_hub']
+  customHubData['stacks'] = {} if custom['stacks'].nil?
+  stacks = customHubData['stacks']
   stacks[stack_id] = stack_data['data']
-  custom['opsworks_hub']['stacks'] = stacks
   bash "set custom json for stack #{node['opsworks']['stack']['id']}" do
     code update_command(custom.to_json)
   end
