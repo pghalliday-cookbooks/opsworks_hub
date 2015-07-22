@@ -6,6 +6,17 @@ end
 
 use_inline_resources
 
+def aws_authentication
+  if new_resource.access_key_id
+    [
+      "AWS_ACCESS_KEY_ID=#{new_resource.access_key_id}",
+      "AWS_SECRET_ACCESS_KEY=#{new_resource.secret_access_key}"
+    ].join(' ')
+  else
+    ''
+  end
+end
+
 def create_deployment_command
   stack_data = {
     opsworks_hub: {
@@ -28,8 +39,7 @@ def create_deployment_command
     }
   }.to_json
   [
-    "AWS_ACCESS_KEY_ID=#{new_resource.access_key_id}",
-    "AWS_SECRET_ACCESS_KEY=#{new_resource.secret_access_key}",
+    aws_authentication,
     'aws opsworks --region us-east-1 create-deployment',
     "--stack-id #{new_resource.opsworks_hub_stack_id}",
     '--command',

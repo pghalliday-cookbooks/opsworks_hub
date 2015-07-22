@@ -6,6 +6,17 @@ end
 
 use_inline_resources
 
+def aws_authentication
+  if new_resource.access_key_id
+    [
+      "AWS_ACCESS_KEY_ID=#{new_resource.access_key_id}",
+      "AWS_SECRET_ACCESS_KEY=#{new_resource.secret_access_key}"
+    ].join(' ')
+  else
+    ''
+  end
+end
+
 def create_deployment_command (stack_id, stacks, recipes)
   stacks_data = {
     opsworks_hub: {
@@ -19,8 +30,7 @@ def create_deployment_command (stack_id, stacks, recipes)
     }
   }.to_json
   [
-    "AWS_ACCESS_KEY_ID=#{new_resource.access_key_id}",
-    "AWS_SECRET_ACCESS_KEY=#{new_resource.secret_access_key}",
+    aws_authentication,
     'aws opsworks --region us-east-1 create-deployment',
     "--stack-id #{stack_id}",
     '--command',
@@ -32,7 +42,7 @@ end
 
 def update_command (custom_json)
   [
-    "AWS_ACCESS_KEY_ID=#{new_resource.access_key_id}",
+    aws_authentication,
     "AWS_SECRET_ACCESS_KEY=#{new_resource.secret_access_key}",
     'aws opsworks --region us-east-1 update-stack',
     "--stack-id #{node['opsworks']['stack']['id']}",
@@ -43,9 +53,8 @@ end
 
 def describe_command
   [
+    aws_authentication,
     "AWS_DEFAULT_OUTPUT=json",
-    "AWS_ACCESS_KEY_ID=#{new_resource.access_key_id}",
-    "AWS_SECRET_ACCESS_KEY=#{new_resource.secret_access_key}",
     'aws opsworks --region us-east-1 describe-stacks',
     "--stack-ids #{node['opsworks']['stack']['id']}"
   ].join(' ')
