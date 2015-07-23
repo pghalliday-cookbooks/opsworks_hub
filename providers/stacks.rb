@@ -81,8 +81,10 @@ action :upsert_and_notify do
     code update_command(custom.to_json)
   end
   stacks.each do |id, stack|
-    bash "notify stack #{id} with current stack states" do
-      code create_deployment_command(id, stacks, stack['recipes'])
+    if stack['recipes']
+      bash "notify stack #{id} with current stack states" do
+        code create_deployment_command(id, stacks, stack['recipes'])
+      end
     end
   end
 end
