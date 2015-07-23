@@ -72,18 +72,20 @@ action :upsert_and_notify do
   description = JSON.parse(description_json.stdout)
   custom_json = description['Stacks'][0]['CustomJson']
   custom = JSON.parse(custom_json)
-  custom['opsworks_hub'] = {} if custom['opsworks_hub'].nil?
+  custom['opsworks_hub'] ||= {}
   customHubData = custom['opsworks_hub']
-  customHubData['stacks'] = {} if custom['stacks'].nil?
+  customHubData['stacks'] ||= {}
   stacks = customHubData['stacks']
-  stacks[stack_id] = stack_data['data']
-  bash "set custom json for stack #{node['opsworks']['stack']['id']}" do
-    code update_command(custom.to_json)
-  end
-  stacks.each do |id, stack|
-    if stack['recipes']
-      bash "notify stack #{id} with current stack states" do
-        code create_deployment_command(id, stacks, stack['recipes'])
+  if stacks[stack_id] != stack_data['data']
+    stacks[stack_id] = stack_data['data']
+    bash "set custom json for stack #{node['opsworks']['stack']['id']}" do
+      code update_command(custom.to_json)
+    end
+    stacks.each do |id, stack|
+      if stack['recipes']
+        bash "notify stack #{id} with current stack states" do
+          code create_deployment_command(id, stacks, stack['recipes'])
+        end
       end
     end
   end
