@@ -82,7 +82,7 @@ action :upsert_and_notify do
       code update_command(custom.to_json)
     end
     stacks.each do |id, stack|
-      if stack['recipes'] && !stack['recipes'].empty?
+      unless stack['recipes'].nil? || stack['recipes'].empty?
         bash "notify stack #{id} with current stack states" do
           code create_deployment_command(id, stacks, stack['recipes'])
         end
