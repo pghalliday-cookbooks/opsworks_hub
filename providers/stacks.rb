@@ -64,7 +64,6 @@ action :upsert_and_notify do
   stack_data = new_resource.nodes
   raise "invalid stack data - need id" if stack_data['id'].nil?
   raise "invalid stack data - need data" if stack_data['data'].nil?
-  raise "invalid stack data - need recipes" if stack_data['data']['recipes'].nil?
   stack_id = stack_data['id']
   description_json = Mixlib::ShellOut.new(describe_command)
   description_json.run_command
