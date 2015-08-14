@@ -64,6 +64,7 @@ action :upsert_and_notify do
   stack_data = new_resource.nodes
   raise "invalid stack data - need stack" if stack_data['stack'].nil?
   raise "invalid stack data - need name" if stack_data['stack']['name'].nil?
+  raise "invalid stack data - need id" if stack_data['stack']['id'].nil?
   stack_name = stack_data['stack']['name']
   description_json = Mixlib::ShellOut.new(describe_command)
   description_json.run_command
@@ -83,7 +84,7 @@ action :upsert_and_notify do
     stacks.each do |name, stack|
       unless stack['recipes'].nil? || stack['recipes'].empty?
         bash "notify stack #{name} with current stack states" do
-          code create_deployment_command(id, stacks, stack['recipes'])
+          code create_deployment_command(stack['stack']['id'], stacks, stack['recipes'])
         end
       end
     end
