@@ -21,12 +21,9 @@ def create_deployment_command
   stack_data = {
     opsworks_hub: {
       incoming: {
-        data: {
-          stack: node['opsworks']['stack'],
-          layers: node['opsworks']['layers'],
-          recipes: new_resource.recipes
-        },
-        id: node['opsworks']['stack']['id']
+        stack: node['opsworks']['stack'],
+        layers: node['opsworks']['layers'],
+        recipes: new_resource.recipes
       }
     }
   }.to_json

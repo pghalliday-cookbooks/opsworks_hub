@@ -62,9 +62,9 @@ end
 
 action :upsert_and_notify do
   stack_data = new_resource.nodes
-  raise "invalid stack data - need name" if stack_data['name'].nil?
-  raise "invalid stack data - need data" if stack_data['data'].nil?
-  stack_name = stack_data['name']
+  raise "invalid stack data - need stack" if stack_data['stack'].nil?
+  raise "invalid stack data - need name" if stack_data['stack']['name'].nil?
+  stack_name = stack_data['stack']['name']
   description_json = Mixlib::ShellOut.new(describe_command)
   description_json.run_command
   description_json.error!
@@ -75,8 +75,8 @@ action :upsert_and_notify do
   customHubData = custom['opsworks_hub']
   customHubData['stacks'] ||= {}
   stacks = customHubData['stacks']
-  if stacks[stack_name] != stack_data['data']
-    stacks[stack_name] = stack_data['data']
+  if stacks[stack_name] != stack_data
+    stacks[stack_name] = stack_data
     bash "set custom json for stack #{node['opsworks']['stack']['id']}" do
       code update_command(custom.to_json)
     end
